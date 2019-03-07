@@ -75,8 +75,16 @@ export const testItems = [
     "price": 1000,
     "date": "2019-03-11",
     "monthCategory": "2019-8",
-    "id": "_1fg1wme63",
+    "id": "_1fg1wme22",
     "cid": "6",
     "timestamp": 1533945600000
+  },{
+    "title": "buy stuff for kitten",
+    "price": 100,
+    "date": "2019-03-15",
+    "monthCategory": "2019-8",
+    "id": "_kly1kl273g",
+    "cid": "1",
+    "timestamp": 1534291200000
   }
 ]

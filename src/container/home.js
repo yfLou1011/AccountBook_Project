@@ -3,7 +3,7 @@ import {withRouter} from 'react-router-dom';
 import Ionicon from 'react-ionicons';
 import PriceList from '../components/priceList';
 import ViewTab from '../components/viewTab';
-import {LIST_VIEW, GRAPH_VIEW, padLeft, parseToYearAndMonth, TYPE_INCOME, TYPE_OUTCOME} from '../utility';
+import {LIST_VIEW, GRAPH_VIEW, padLeft, parseToYearAndMonth, TYPE_INCOME, TYPE_OUTCOME, Colors} from '../utility';
 import TotalPrice from '../components/totalPrice';
 import MonthPicker from '../components/monthPicker';
 import CreateBtn from '../components/createBtn';
@@ -11,8 +11,36 @@ import PriceForm from '../components/priceForm';
 import {Tabs, Tab} from '../components/tabs';
 import withContext from '../withContext';
 import {testCategories, testItems} from '../testData';
+import CustomPieChart from '../components/pieChart';
 
-const tabsText = [LIST_VIEW, GRAPH_VIEW]
+const chartData = [
+    {name: 'Page A', value: 400},
+    {name: 'Page B', value: 700},
+    {name: 'Page C', value: 300},
+    {name: 'Page D', value: 400},
+    {name: 'Page E', value: 500},
+  ];
+
+const tabsText = [LIST_VIEW, GRAPH_VIEW];
+const generateChartDataByCategory = (items, type) => {
+  let categoryMap = {};
+  items.filter(item => item.category.type === type).forEach(item => {
+    if(categoryMap[item.cid]){
+      categoryMap[item.cid].value += item.price*1;
+      categoryMap[item.cid].items.push(item.id);
+    }else{
+      categoryMap[item.cid] = {
+        name: item.category.name,
+        value: item.price * 1,
+        items: [item.id]
+      }
+    }
+  })
+  return Object.keys(categoryMap).map(mapKey => {
+    return {...categoryMap[mapKey]}
+  })
+}
+
 class Home extends React.Component {
   constructor(props){
     super(props);
@@ -57,6 +85,12 @@ class Home extends React.Component {
       item.category.type===TYPE_INCOME?
       totalIncome += item.price : totalOutcome += item.price
     })
+
+    const chartOutcomeDataByCategory = generateChartDataByCategory(itemsWithCategories, TYPE_OUTCOME);
+    const chartIncomeDataByCategory = generateChartDataByCategory(itemsWithCategories, TYPE_INCOME);
+
+
+
     return (
       <React.Fragment>
         <header class='App-header-new'>
@@ -100,7 +134,11 @@ class Home extends React.Component {
           }
           {
             tabView===GRAPH_VIEW &&
-            <h1>This is graph</h1>
+            <React.Fragment>
+              <CustomPieChart title={"本月支出"} categoryData={chartOutcomeDataByCategory}/>
+              <CustomPieChart title={"本月收入"} categoryData={chartIncomeDataByCategory}/>
+            </React.Fragment>
+
           }
         </div>
       </React.Fragment>
